@@ -38,7 +38,7 @@ const deepCleaningServices: ServiceItem[] = [
 const handymanServices: ServiceItem[] = [
   { title: "Furniture Assembly & Repair", image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800&auto=format&fit=crop", href: "/services/furniture-assembly" },
   { title: "Balcony Bird & Safety Net Installation", image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop", href: "/services/safety-net" },
-  { title: "Tile Grouting & Waterproofing", image: "https://images.unsplash.com/photo-1523413651479-59cb1f20e278?q=80&w=800&auto=format&fit=crop", href: "/services/tile-grouting" },
+  { title: "Tile Grouting & Waterproofing", image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop", href: "/services/tile-grouting" },
 ];
 
 export default function Home() {
