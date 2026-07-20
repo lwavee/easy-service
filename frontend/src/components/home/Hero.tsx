@@ -21,8 +21,8 @@ export default function Hero() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background border border-border shadow-sm text-sm font-medium mb-8"
           >
-            <Star className="w-4 h-4 text-warning fill-warning" />
-            <span>Over 1 Million+ Happy Customers</span>
+            <ShieldCheck className="w-4 h-4 text-primary" />
+            <span>Your Trusted Neighborhood Service</span>
           </motion.div>
           
           <motion.h1

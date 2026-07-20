@@ -40,7 +40,7 @@ export default function CustomerReviews() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-success/10 text-success font-medium text-sm mb-4"
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>Trusted by Thousands</span>
+            <span>Loved by Our Early Adopters</span>
           </motion.div>
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
@@ -49,7 +49,7 @@ export default function CustomerReviews() {
             transition={{ delay: 0.1 }}
             className="text-3xl md:text-5xl font-bold tracking-tight text-foreground mb-4"
           >
-            Don't Just Take <span className="text-primary">Our Word</span> For It
+            What Our <span className="text-primary">First Customers</span> Say
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
