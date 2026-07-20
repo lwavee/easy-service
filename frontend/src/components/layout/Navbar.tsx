@@ -3,20 +3,45 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Menu, X, ChevronDown, User, Search } from "lucide-react";
+import { Menu, X, ChevronDown, User, Search, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
     window.addEventListener("scroll", handleScroll);
+
+    // Initialize theme
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
+    } else {
+      setDarkMode(false);
+      document.documentElement.classList.remove("dark");
+    }
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const toggleDarkMode = () => {
+    if (darkMode) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+      setDarkMode(false);
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+      setDarkMode(true);
+    }
+  };
 
   return (
     <header
@@ -67,6 +92,15 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="hidden md:flex items-center gap-4">
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleDarkMode}
+            aria-label="Toggle Light / Dark Mode"
+            className="p-2 rounded-full border border-border bg-card text-foreground hover:border-primary transition-all shadow-sm"
+          >
+            {darkMode ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-slate-700" />}
+          </button>
+
           <button className="text-muted-foreground hover:text-foreground transition-colors p-2">
             <Search size={20} />
           </button>
@@ -78,13 +112,23 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden text-foreground p-2"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile Menu Toggle & Theme */}
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            onClick={toggleDarkMode}
+            aria-label="Toggle Light / Dark Mode"
+            className="p-2 rounded-full border border-border bg-card text-foreground"
+          >
+            {darkMode ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-slate-700" />}
+          </button>
+
+          <button
+            className="text-foreground p-2"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -120,12 +164,16 @@ export default function Navbar() {
             Contact
           </Link>
           <div className="flex flex-col gap-3 pt-2">
-            <Button variant="outline" className="w-full justify-center">
-              Log in
-            </Button>
-            <Button className="w-full justify-center rounded-full">
-              Book Now
-            </Button>
+            <Link href="/login">
+              <Button variant="outline" className="w-full justify-center">
+                Log in
+              </Button>
+            </Link>
+            <Link href="/book">
+              <Button className="w-full justify-center rounded-full">
+                Book Now
+              </Button>
+            </Link>
           </div>
         </motion.div>
       )}

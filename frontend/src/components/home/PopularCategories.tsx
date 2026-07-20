@@ -3,33 +3,32 @@
 import { motion } from "framer-motion";
 import { 
   Sparkles, Zap, Snowflake, Wrench, Paintbrush, 
-  Laptop, Tv, ChefHat, Droplets, Flower2, 
-  Shirt, Scissors
+  Tv, Droplets, Car
 } from "lucide-react";
 import Link from "next/link";
 
 const categories = [
-  { name: "Cleaning", icon: Sparkles, color: "bg-blue-500/10 text-blue-600 dark:text-blue-400" },
-  { name: "Electrician", icon: Zap, color: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400" },
-  { name: "AC Repair", icon: Snowflake, color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400" },
-  { name: "Plumbing", icon: Droplets, color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" },
-  { name: "Painting", icon: Paintbrush, color: "bg-purple-500/10 text-purple-600 dark:text-purple-400" },
-  { name: "Electronics", icon: Tv, color: "bg-red-500/10 text-red-600 dark:text-red-400" },
-  { name: "Carpentry", icon: Wrench, color: "bg-amber-500/10 text-amber-600 dark:text-amber-400" },
-  { name: "Salon at Home", icon: Scissors, color: "bg-pink-500/10 text-pink-600 dark:text-pink-400" },
+  { name: "AC Repair", icon: Snowflake, color: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400", href: "/services/ac-repair" },
+  { name: "Car Cleaning", icon: Car, color: "bg-blue-500/10 text-blue-600 dark:text-blue-400", href: "/services/car-foam-wash" },
+  { name: "Deep Home Cleaning", icon: Sparkles, color: "bg-teal-500/10 text-teal-600 dark:text-teal-400", href: "/services/cleaning" },
+  { name: "Electrician", icon: Zap, color: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400", href: "/services/electrician" },
+  { name: "Plumbing", icon: Droplets, color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400", href: "/services/plumbing" },
+  { name: "Painting", icon: Paintbrush, color: "bg-purple-500/10 text-purple-600 dark:text-purple-400", href: "/services/painting" },
+  { name: "Appliance Repair", icon: Tv, color: "bg-red-500/10 text-red-600 dark:text-red-400", href: "/services/appliance" },
+  { name: "Carpentry", icon: Wrench, color: "bg-amber-500/10 text-amber-600 dark:text-amber-400", href: "/services/carpentry" },
 ];
 
 export default function PopularCategories() {
   return (
-    <section className="py-24 bg-background relative overflow-hidden">
+    <section className="py-20 bg-background relative overflow-hidden">
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-14">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground mb-4">
-            Professional Services, <span className="text-primary">On Demand</span>
+            Popular Services, <span className="text-primary">On Demand</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            From deep cleaning to quick repairs, book expert professionals instantly.
+            From AC servicing to car spa & deep home cleaning, book expert professionals instantly.
           </p>
         </div>
 
@@ -37,15 +36,14 @@ export default function PopularCategories() {
           {categories.map((category, index) => {
             const Icon = category.icon;
             return (
-              <Link href={`/services/${category.name.toLowerCase().replace(/ /g, "-")}`} key={index}>
+              <Link href={category.href} key={index}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ delay: index * 0.05, duration: 0.5 }}
-                  className="group relative bg-card border border-border p-6 rounded-3xl overflow-hidden cursor-pointer"
+                  className="group relative bg-card border border-border p-6 rounded-3xl overflow-hidden cursor-pointer shadow-sm hover:shadow-lg hover:border-primary/50 transition-all"
                 >
-                  {/* Hover Gradient Background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
                   <div className="relative flex flex-col items-center text-center gap-4 z-10">

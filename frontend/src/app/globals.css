@@ -124,6 +124,18 @@
   --sidebar-ring: #14B8A6;
 }
 
+/* Hide scrollbar utility for WebKit (Chrome, Safari, Edge) & Firefox */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

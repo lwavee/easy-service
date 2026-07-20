@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-background pt-20 md:pt-28 pb-20 lg:pb-32">
+    <section className="relative overflow-hidden bg-background pt-20 md:pt-28 pb-16 lg:pb-24">
       {/* Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/20 rounded-full blur-[100px] opacity-60 pointer-events-none" />
       
@@ -31,7 +31,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6 leading-tight"
           >
-            Your Home Needs, <br />
+            Your Home & Car Needs, <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">Expertly Handled.</span>
           </motion.h1>
 
@@ -41,7 +41,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl"
           >
-            Book trusted, background-verified professionals for cleaning, repairs, painting, and more. 
+            Book trusted, background-verified professionals for AC servicing, car spa, deep home cleaning, plumbing & repairs. 
           </motion.p>
 
           {/* Search Box Area */}
@@ -65,7 +65,7 @@ export default function Hero() {
               <div className="flex items-center w-full md:w-2/3 px-4 relative">
                 <Search className="w-5 h-5 text-muted-foreground mr-2 shrink-0" />
                 <Input 
-                  placeholder="Search for 'AC Repair' or 'Cleaning'..." 
+                  placeholder="Search for 'AC Repair', 'Car Wash', or 'Cleaning'..." 
                   className="border-0 shadow-none focus-visible:ring-0 px-0 bg-transparent text-base"
                 />
                 <Button size="lg" className="rounded-full absolute right-0 md:right-1 h-10 px-6 shrink-0 hidden md:flex">
@@ -81,11 +81,16 @@ export default function Hero() {
             
             {/* Trending Tags */}
             <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
-              <span className="text-sm text-muted-foreground mr-2">Trending:</span>
-              {["AC Repair", "Deep Cleaning", "Electrician", "Pest Control"].map((tag, i) => (
-                <Link key={i} href={`/services/${tag.toLowerCase().replace(' ', '-')}`}>
-                  <span className="text-xs md:text-sm px-3 py-1.5 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer border border-border/50">
-                    {tag}
+              <span className="text-sm text-muted-foreground mr-2 font-medium">Trending:</span>
+              {[
+                { label: "AC Jet Service", href: "/services/split-ac" },
+                { label: "Car Foam Wash", href: "/services/car-foam-wash" },
+                { label: "Deep Home Clean", href: "/services/cleaning" },
+                { label: "Electrician", href: "/services/electrician" }
+              ].map((tag, i) => (
+                <Link key={i} href={tag.href}>
+                  <span className="text-xs md:text-sm px-3.5 py-1.5 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer border border-border/50 font-medium">
+                    {tag.label}
                   </span>
                 </Link>
               ))}
@@ -97,12 +102,12 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="flex flex-wrap justify-center gap-6 md:gap-12 mt-16 pt-8 border-t border-border/50 w-full"
+            className="flex flex-wrap justify-center gap-6 md:gap-12 mt-14 pt-8 border-t border-border/50 w-full"
           >
             {[
               { icon: ShieldCheck, text: "Background Verified Pros" },
-              { icon: Clock, text: "On-time Guarantee" },
-              { icon: Star, text: "High-Quality Service" },
+              { icon: Clock, text: "On-Time Doorstep Guarantee" },
+              { icon: Star, text: "30-Day Free Rework Cover" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2 text-muted-foreground">
                 <div className="bg-primary/10 p-2 rounded-full">
