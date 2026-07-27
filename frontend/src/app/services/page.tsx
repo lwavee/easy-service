@@ -1,241 +1,341 @@
-import ServiceCarousel, { ServiceItem } from "@/components/home/ServiceCarousel";
-import { Sparkles, Snowflake, Car, Wrench, Utensils, ShieldCheck, CheckCircle2, Zap, Tv } from "lucide-react";
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { 
+  Sparkles, Star, Clock, CheckCircle2, 
+  Wrench, Zap, Droplets, Paintbrush, Home, Utensils, Bug, ArrowRight, FileText
+} from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { getStoredQuotes, saveQuotes } from "@/lib/store";
+import { Quote } from "@/types";
 
-const electricalApplianceServices: ServiceItem[] = [
-  { 
-    title: "Split & Window AC Servicing", 
-    image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/split-ac",
-    tag: "Best Seller"
-  },
-  { 
-    title: "Smart TV Repair & Wall Mounting", 
-    image: "https://images.unsplash.com/photo-1593784991095-a205069470b6?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/tv-installation",
-    tag: "Same Day"
-  },
-  { 
-    title: "Ceiling & Exhaust Fan Repair", 
-    image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/fan-repair" 
-  },
-  { 
-    title: "Air Cooler Repair & Servicing", 
-    image: "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/air-cooler-repair",
-    tag: "Summer Special"
-  },
-  { 
-    title: "Water Geyser & Room Heater Fix", 
-    image: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/geyser-repair" 
-  },
-  { 
-    title: "Washing Machine Repair & Service", 
-    image: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/washing-machine",
-    tag: "Top Rated"
-  },
-  { 
-    title: "Refrigerator & Fridge Repair", 
-    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/refrigerator" 
-  },
-  { 
-    title: "Microwave & Convection Oven Fix", 
-    image: "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/microwave" 
-  },
-  { 
-    title: "Kitchen Chimney & Hob Repair", 
-    image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/chimney-repair" 
-  },
-  { 
-    title: "Inverter Battery & Wiring Repair", 
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/electrician",
-    tag: "24/7 Express"
-  },
+const CATEGORIES = [
+  { id: "all", name: "All Home Services", icon: Sparkles },
+  { id: "appliance", name: "AC & Appliances", icon: Wrench },
+  { id: "cleaning", name: "Deep Cleaning", icon: Home },
+  { id: "plumbing", name: "Plumbing Fixes", icon: Droplets },
+  { id: "electrical", name: "Electrician", icon: Zap },
+  { id: "chef", name: "Chef & Cooking", icon: Utensils },
+  { id: "painting", name: "Wall Painting", icon: Paintbrush },
+  { id: "pest", name: "Pest Control", icon: Bug },
 ];
 
-const vehicleCleaningServices: ServiceItem[] = [
-  { 
-    title: "Car Exterior Foam Wash & Wax", 
-    image: "https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/car-foam-wash",
-    tag: "Trending"
+const SERVICES_LIST = [
+  {
+    id: "ac-repair",
+    category: "appliance",
+    title: "AC Foam Jet Service & Cooling Inspection",
+    price: 699,
+    originalPrice: 999,
+    rating: 4.9,
+    reviews: 1420,
+    duration: "60 Mins",
+    description: "High pressure foam jet washing of indoor cooling coil, outdoor unit spray wash, refrigerant leak test & filter sanitization.",
+    inclusions: ["Foam jet pressure wash", "Outdoor condenser flush", "Gas pressure check", "30-Day Doorstep Warranty"],
+    popular: true
   },
-  { 
-    title: "Car Interior Deep Spa & Vacuum", 
-    image: "https://images.unsplash.com/photo-1607860108855-64acf2078ed9?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/car-interior-cleaning",
-    tag: "Best Seller"
+  {
+    id: "cleaning",
+    category: "cleaning",
+    title: "Full Home Deep Cleaning (3 BHK)",
+    price: 2499,
+    originalPrice: 3499,
+    rating: 4.8,
+    reviews: 980,
+    duration: "4 - 5 Hours",
+    description: "Industrial machine scrubbing of floors, kitchen grease removal, bathroom descaling, window tracks & balcony cleaning.",
+    inclusions: ["3 Trained verified experts", "Eco-friendly disinfectant chemicals", "Kitchen oil degreasing", "Bathroom stain removal"],
+    popular: true
   },
-  { 
-    title: "Complete Car Full Spa & Polish", 
-    image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/car-full-spa" 
+  {
+    id: "plumbing",
+    category: "plumbing",
+    title: "Plumbing Repair & Pipe Leakage Fix",
+    price: 399,
+    originalPrice: 599,
+    rating: 4.7,
+    reviews: 850,
+    duration: "45 Mins",
+    description: "Expert fixing of leaking taps, washbasin trap unclogging, flush tank valve replacement & shower fitting repair.",
+    inclusions: ["Fault diagnosis & leak test", "Tap & washer repairs", "Post-repair cleanup"],
+    popular: true
   },
-  { 
-    title: "Bike & Superbike Foam Wash", 
-    image: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/bike-cleaning" 
+  {
+    id: "electrician",
+    category: "electrical",
+    title: "Electrician Appliance & Wiring Repair",
+    price: 299,
+    originalPrice: 450,
+    rating: 4.9,
+    reviews: 2100,
+    duration: "45 Mins",
+    description: "MCB trip diagnosis, switch replacement, ceiling fan installation, geyser wiring check & main circuit breaker fixes.",
+    inclusions: ["Certified electrician visit", "Safety isolation tools", "30-Day warranty"],
+    popular: true
   },
+  {
+    id: "cooking",
+    category: "chef",
+    title: "Private Chef & Party Cook Service",
+    price: 1499,
+    originalPrice: 1999,
+    rating: 5.0,
+    reviews: 620,
+    duration: "2 - 3 Hours",
+    description: "Hygienic multi-course meal preparation right at home. Custom menu for breakfast, lunch, dinner or intimate house parties.",
+    inclusions: ["Professional master chef", "Customized recipe choices", "Kitchen counter cleanup post cooking"],
+    popular: true
+  },
+  {
+    id: "painting",
+    category: "painting",
+    title: "Full Home Wall Painting & Waterproofing",
+    price: 4999,
+    originalPrice: 6999,
+    rating: 4.8,
+    reviews: 430,
+    duration: "1 - 3 Days",
+    description: "Laser measurement, wall dampness check, premium Royale/Emulsion coats with zero mess drop sheet protection.",
+    inclusions: ["On-site color consultation", "Wall crack filling & sanding", "Furniture plastic wrapping"],
+    popular: false
+  },
+  {
+    id: "pest",
+    category: "pest",
+    title: "Cockroach & Pest Control Odorless Spray",
+    price: 899,
+    originalPrice: 1299,
+    rating: 4.8,
+    reviews: 510,
+    duration: "45 Mins",
+    description: "Government-approved odorless gel & spray application targeting kitchen cabinets, drain pipes, and wall crevices.",
+    inclusions: ["Odorless gel application", "Drain pipe spray treatment", "90-Day protection guarantee"],
+    popular: false
+  }
 ];
-
-const homeCleaningServices: ServiceItem[] = [
-  { 
-    title: "Full Home Deep Cleaning", 
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/deep-cleaning", 
-    tag: "Popular" 
-  },
-  { 
-    title: "Sofa & Upholstery Shampooing", 
-    image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/sofa-cleaning" 
-  },
-  { 
-    title: "Bathroom Sanitization & Scale Removal", 
-    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/bathroom-cleaning" 
-  },
-  { 
-    title: "Kitchen Degreasing & Cabinet Clean", 
-    image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/kitchen-cleaning" 
-  },
-  { 
-    title: "Overhead Water Tank Disinfection", 
-    image: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/water-tank-cleaning" 
-  },
-  { 
-    title: "Carpet Steam Cleaning", 
-    image: "https://images.unsplash.com/photo-1558317374-067fb5f30001?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/carpet-cleaning" 
-  },
-  { 
-    title: "Pest & Termite Control Protection", 
-    image: "https://images.unsplash.com/photo-1615873968403-89e068629265?q=80&w=800&auto=format&fit=crop", 
-    href: "/services/pest-control",
-    tag: "Eco Friendly" 
-  },
-];
-
-const cookingServices: ServiceItem[] = [
-  { title: "North Indian Cook", image: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800&auto=format&fit=crop", href: "/services/cook-north-indian" },
-  { title: "South Indian Cook", image: "https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?q=80&w=800&auto=format&fit=crop", href: "/services/cook-south-indian" },
-  { title: "Mughlai Cook", image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?q=80&w=800&auto=format&fit=crop", href: "/services/cook-mughlai" },
-  { title: "Chinese Cook", image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?q=80&w=800&auto=format&fit=crop", href: "/services/cook-chinese" },
-  { title: "Continental Cook", image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800&auto=format&fit=crop", href: "/services/cook-continental" },
-  { title: "Italian Cook", image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=800&auto=format&fit=crop", href: "/services/cook-italian" },
-  { title: "Bakery & Pastry Cook", image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop", href: "/services/cook-bakery" },
-  { title: "Tandoor Cook", image: "https://images.unsplash.com/photo-1626776876729-bab4369a5a5a?q=80&w=800&auto=format&fit=crop", href: "/services/cook-tandoor" },
-  { title: "Fast Food Cook", image: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=800&auto=format&fit=crop", href: "/services/cook-fast-food" },
-  { title: "Sweets (Halwai) Cook", image: "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?q=80&w=800&auto=format&fit=crop", href: "/services/cook-sweets" },
-];
-
-export const metadata = {
-  title: "All Electrical & Appliance Repair Services | ServiceHub",
-  description: "Book certified repairs for AC, Smart TV, Fan, Cooler, Heater, Washing Machine, Refrigerator, Microwave, and home electrical wiring.",
-};
 
 export default function ServicesPage() {
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [quoteName, setQuoteName] = useState("");
+  const [quotePhone, setQuotePhone] = useState("");
+  const [quoteReq, setQuoteReq] = useState("");
+  const [quoteSubmitted, setQuoteSubmitted] = useState(false);
+
+  const filteredServices = selectedCategory === "all" 
+    ? SERVICES_LIST 
+    : SERVICES_LIST.filter(s => s.category === selectedCategory);
+
+  const handleQuoteSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quoteName || !quotePhone) return;
+
+    const newQuote: Quote = {
+      id: `QT-${Math.floor(800 + Math.random() * 100)}`,
+      clientName: quoteName,
+      clientPhone: quotePhone,
+      clientEmail: `${quoteName.toLowerCase().replace(/\s+/g, ".")}@example.com`,
+      projectTitle: "Custom Home / Commercial Inquiry",
+      description: quoteReq || "User requested a customized doorstep service quotation.",
+      lineItems: [{ description: "Custom Service Quote Estimate", qty: 1, unitPrice: 2500 }],
+      totalEstimatedCost: 2500,
+      status: "draft",
+      createdAt: new Date().toISOString().split("T")[0],
+      validUntil: "2026-08-30"
+    };
+
+    const quotes = getStoredQuotes();
+    saveQuotes([newQuote, ...quotes]);
+
+    setQuoteSubmitted(true);
+    setTimeout(() => {
+      setShowQuoteModal(false);
+      setQuoteSubmitted(false);
+      setQuoteName("");
+      setQuotePhone("");
+      setQuoteReq("");
+    }, 2000);
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-muted/10 pt-24 pb-20">
+    <div className="min-h-screen bg-muted/10 pt-28 pb-20">
       
-      {/* Header Banner */}
-      <section className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 text-primary-foreground py-16 mb-8 relative overflow-hidden">
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center max-w-3xl">
-          <span className="px-4 py-1 rounded-full bg-primary-foreground/10 text-primary-foreground text-xs font-semibold uppercase tracking-wider mb-4 inline-block">
-            Background-Verified Experts
-          </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
-            Electrical & Home Appliance Repair Directory
-          </h1>
-          <p className="text-lg text-primary-foreground/90 max-w-xl mx-auto">
-            Book certified professionals for AC, TV, Fan, Air Cooler, Geyser, Washing Machine, and home electrical repairs with 30-day warranty.
-          </p>
-        </div>
-      </section>
+      {/* Hero Header */}
+      <div className="container mx-auto px-4 md:px-6 mb-12 text-center max-w-3xl">
+        <span className="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4 inline-block border border-primary/20">
+          HomeTriangle Hire Experts Catalog
+        </span>
+        <h1 className="text-4xl md:text-6xl font-extrabold text-foreground tracking-tight mb-4">
+          Book Background-Verified Home Service Experts
+        </h1>
+        <p className="text-muted-foreground text-base md:text-lg">
+          Transparent upfront pricing, 30-day service guarantee, and instant doorstep technician arrival.
+        </p>
+      </div>
 
-      {/* Quick Nav Category Chips */}
-      <div className="container mx-auto px-4 md:px-6 mb-10">
-        <div className="flex flex-wrap gap-3 justify-center">
-          <a href="#electrical-appliances" className="px-5 py-2.5 rounded-full bg-card border border-border shadow-sm text-sm font-semibold text-foreground hover:border-primary hover:text-primary transition-all flex items-center gap-2">
-            <Zap className="w-4 h-4 text-yellow-500" /> Electrical & Appliance Repair
-          </a>
-          <a href="#car-cleaning" className="px-5 py-2.5 rounded-full bg-card border border-border shadow-sm text-sm font-semibold text-foreground hover:border-primary hover:text-primary transition-all flex items-center gap-2">
-            <Car className="w-4 h-4 text-blue-500" /> Car & Bike Detailing
-          </a>
-          <a href="#home-cleaning" className="px-5 py-2.5 rounded-full bg-card border border-border shadow-sm text-sm font-semibold text-foreground hover:border-primary hover:text-primary transition-all flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-emerald-500" /> Deep Home Cleaning
-          </a>
-          <a href="#cooking" className="px-5 py-2.5 rounded-full bg-card border border-border shadow-sm text-sm font-semibold text-foreground hover:border-primary hover:text-primary transition-all flex items-center gap-2">
-            <Utensils className="w-4 h-4 text-amber-500" /> Private Chef & Cooks
-          </a>
+      {/* Categories Filter Tabs */}
+      <div className="container mx-auto px-4 md:px-6 mb-12">
+        <div className="flex items-center justify-center gap-3 overflow-x-auto pb-4">
+          {CATEGORIES.map((cat) => {
+            const Icon = cat.icon;
+            const active = selectedCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold transition-all shrink-0 border ${
+                  active 
+                    ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20" 
+                    : "bg-card border-border text-foreground hover:border-primary/40"
+                }`}
+              >
+                <Icon size={16} /> {cat.name}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Carousels */}
-      <div className="space-y-12">
-        <div id="electrical-appliances">
-          <ServiceCarousel 
-            title="Electrical & Appliance Repair (AC, TV, Fan, Cooler, Heater & More)" 
-            items={electricalApplianceServices} 
-          />
-        </div>
+      {/* Services Grid */}
+      <div className="container mx-auto px-4 md:px-6 max-w-7xl">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredServices.map((svc) => (
+            <div key={svc.id} className="bg-card border border-border rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all space-y-5 flex flex-col justify-between group">
+              
+              <div className="space-y-4">
+                {/* Header */}
+                <div className="flex justify-between items-start">
+                  <div>
+                    {svc.popular && (
+                      <span className="text-[10px] font-extrabold uppercase bg-amber-500/10 text-amber-600 px-2.5 py-0.5 rounded-full border border-amber-500/20 block w-fit mb-2">
+                        ★ Most Popular
+                      </span>
+                    )}
+                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">{svc.title}</h3>
+                  </div>
+                </div>
 
-        <div id="car-cleaning">
-          <ServiceCarousel 
-            title="Car & Vehicle Cleaning Services" 
-            items={vehicleCleaningServices} 
-          />
-        </div>
+                <div className="flex items-center gap-3 text-xs">
+                  <div className="flex items-center gap-1 text-amber-500 font-bold">
+                    <Star size={14} className="fill-amber-400" /> {svc.rating}
+                  </div>
+                  <span className="text-muted-foreground">({svc.reviews} Reviews)</span>
+                  <span>•</span>
+                  <div className="flex items-center gap-1 text-muted-foreground font-semibold">
+                    <Clock size={14} className="text-primary" /> {svc.duration}
+                  </div>
+                </div>
 
-        <div id="home-cleaning">
-          <ServiceCarousel 
-            title="Deep Home Cleaning & Pest Control" 
-            items={homeCleaningServices} 
-          />
-        </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {svc.description}
+                </p>
 
-        <div id="cooking">
-          <ServiceCarousel 
-            title="Professional Chefs & Home Cooking" 
-            items={cookingServices} 
-          />
-        </div>
-      </div>
+                {/* Inclusions checklist */}
+                <div className="space-y-1.5 pt-2 border-t border-border/80">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block">What&apos;s Included:</span>
+                  {svc.inclusions.map((inc, idx) => (
+                    <div key={idx} className="flex items-center gap-2 text-xs text-foreground font-medium">
+                      <CheckCircle2 size={14} className="text-emerald-500 shrink-0" />
+                      <span>{inc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-      {/* Trust Banner */}
-      <div className="container mx-auto px-4 md:px-6 mt-16">
-        <div className="bg-card border border-border p-8 rounded-3xl shadow-sm text-center max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-around gap-6">
-          <div className="flex items-center gap-3 text-left">
-            <div className="p-3 bg-primary/10 rounded-2xl text-primary shrink-0">
-              <ShieldCheck className="w-8 h-8" />
+              {/* Price & Action Row */}
+              <div className="pt-4 border-t border-border flex items-center justify-between gap-4">
+                <div>
+                  <span className="text-2xl font-extrabold text-foreground">₹{svc.price}</span>
+                  <span className="text-xs text-muted-foreground line-through ml-1.5">₹{svc.originalPrice}</span>
+                </div>
+
+                <Link 
+                  href={`/book?service=${svc.id}`}
+                  className={cn(buttonVariants({ variant: "default" }), "rounded-2xl px-5 font-bold shadow-md shadow-primary/20")}
+                >
+                  Book Now <ArrowRight size={14} className="ml-1.5" />
+                </Link>
+              </div>
+
             </div>
-            <div>
-              <h4 className="font-bold text-foreground">30-Day Rework Guarantee</h4>
-              <p className="text-xs text-muted-foreground">Free re-visit if electrical issue reoccurs</p>
-            </div>
+          ))}
+        </div>
+
+        {/* Commercial Banner & Custom Quote Modal Trigger */}
+        <div className="mt-16 bg-gradient-to-r from-purple-950 via-slate-900 to-primary text-white rounded-3xl p-8 md:p-12 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 border border-purple-500/30">
+          <div className="space-y-3 max-w-2xl">
+            <span className="bg-purple-500/20 text-purple-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-purple-500/30">
+              Commercial & Large Projects
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold">Need a Custom Quote for Office or Building Renovation?</h2>
+            <p className="text-slate-300 text-sm md:text-base">
+              Get customized estimates with line-item breakdowns, site inspection by senior engineers, and GST invoices.
+            </p>
           </div>
 
-          <div className="flex items-center gap-3 text-left">
-            <div className="p-3 bg-primary/10 rounded-2xl text-primary shrink-0">
-              <CheckCircle2 className="w-8 h-8" />
-            </div>
-            <div>
-              <h4 className="font-bold text-foreground">Licensed Electricians</h4>
-              <p className="text-xs text-muted-foreground">Govt ID & Skill verified technicians</p>
-            </div>
-          </div>
+          <Button 
+            size="lg" 
+            className="rounded-2xl px-8 font-extrabold h-14 bg-white text-slate-900 hover:bg-slate-100 shadow-xl shrink-0 text-base"
+            onClick={() => setShowQuoteModal(true)}
+          >
+            <FileText size={18} className="mr-2 text-purple-600" /> Request Free Expert Quote
+          </Button>
         </div>
       </div>
+
+      {/* Quote Request Modal */}
+      {showQuoteModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl space-y-6 relative">
+            <button 
+              onClick={() => setShowQuoteModal(false)}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground font-bold text-xl"
+            >
+              ✕
+            </button>
+
+            {!quoteSubmitted ? (
+              <form onSubmit={handleQuoteSubmit} className="space-y-4">
+                <div className="text-center space-y-2">
+                  <div className="w-12 h-12 bg-purple-500/10 text-purple-600 rounded-full flex items-center justify-center mx-auto">
+                    <FileText size={24} />
+                  </div>
+                  <h3 className="text-xl font-extrabold text-foreground">Request Commercial Quote</h3>
+                  <p className="text-xs text-muted-foreground">Our estimation specialist will call within 30 minutes</p>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-foreground">Full Name *</label>
+                  <Input required placeholder="Enter your name or business name" value={quoteName} onChange={(e) => setQuoteName(e.target.value)} className="h-11 bg-muted/40" />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-foreground">Phone Number *</label>
+                  <Input required type="tel" placeholder="+91 98765 43210" value={quotePhone} onChange={(e) => setQuotePhone(e.target.value)} className="h-11 bg-muted/40" />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-foreground">Requirement Details</label>
+                  <textarea rows={3} placeholder="Describe work: Office painting, commercial deep scrub, building electrical rewiring..." value={quoteReq} onChange={(e) => setQuoteReq(e.target.value)} className="w-full p-3 rounded-2xl bg-muted/40 border border-border text-xs text-foreground focus:outline-none focus:border-primary" />
+                </div>
+
+                <Button type="submit" className="w-full rounded-2xl font-bold h-12 bg-purple-600 hover:bg-purple-700 text-white shadow-md">
+                  Submit Quote Request
+                </Button>
+              </form>
+            ) : (
+              <div className="text-center py-6 space-y-3">
+                <CheckCircle2 size={48} className="text-emerald-500 mx-auto" />
+                <h4 className="text-lg font-bold text-foreground">Quote Request Received!</h4>
+                <p className="text-xs text-muted-foreground">Our senior project estimator has received your details and will get in touch shortly.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
     </div>
   );

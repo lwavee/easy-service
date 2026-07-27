@@ -1,0 +1,17 @@
+{
+  "name": "ServiceHub Lite - Home Experts & Doorstep Booking",
+  "short_name": "ServiceHub",
+  "description": "Lightweight Android App for instant doorstep booking of background-verified home experts, technicians, cleaners & private chefs.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
